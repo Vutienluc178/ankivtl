@@ -247,7 +247,7 @@
         <div class="w-full px-2 py-1 md:px-4 md:py-1.5 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex flex-col shrink-0 z-10">
             <div class="flex justify-between items-center text-[9px] md:text-[10px] font-bold uppercase tracking-wide mb-0.5">
                 <span id="energy-text" class="text-blue-600 flex items-center gap-0.5"><i class="ph-fill ph-lightning"></i> Khởi động (0%)</span>
-                <span class="text-slate-400">Thẻ: <span id="cards-left-mobile">0</span> | Đích: 100%</span>
+                <span class="text-slate-400">Thẻ còn lại: <span id="cards-left">0</span> | Đích: 100%</span>
             </div>
             <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 md:h-2 rounded-full overflow-hidden flex">
                 <div id="energy-bar" class="h-full bg-blue-500 transition-all duration-500 rounded-full relative overflow-hidden" style="width: 0%">
@@ -721,7 +721,6 @@
             const backEl = document.getElementById(backId);
             frontEl.style.fontSize = ''; backEl.style.fontSize = '';
             
-            // Thuật toán co giãn văn bản để đảm bảo hiển thị to nhất có thể
             let maxSize = window.innerWidth < 768 ? 64 : 80;
             let minSize = window.innerWidth < 768 ? 22 : 18;
             
@@ -755,7 +754,9 @@
                 const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
                 if (parts.length >= 2) {
                     let front = parts[0].replace(/^"|"$/g, '').trim(), back = parts[1].replace(/^"|"$/g, '').trim();
-                    if (front && back && front.toLowerCase() !== "câu hỏi") parsed.push({ id: i, front, back });
+                    if (front && back && front.toLowerCase() !== "câu hỏi" && front.toLowerCase() !== "câu hỏi,đáp án" && !front.toLowerCase().includes("câu hỏi")) {
+                        parsed.push({ id: i, front, back });
+                    }
                 }
             } return parsed;
         }
@@ -765,15 +766,43 @@
             let actualSourceId = studyCodeRaw;
             window.currentScriptUrl = '';
 
-            try {
-                if (studyCodeRaw.length > 20 && !studyCodeRaw.includes(' ')) {
-                    const config = JSON.parse(decodeURIComponent(escape(atob(studyCodeRaw))));
-                    if (config.s) { actualSourceId = config.s; window.currentScriptUrl = config.u || ''; if (config.l) document.getElementById('input-lesson-name').value = config.l; }
+            // Tự động trích xuất ID nếu người dùng dán nguyên đường link Google Sheet
+            const linkMatch = studyCodeRaw.match(/\/d\/([a-zA-Z0-9-_]+)/);
+            if (linkMatch) {
+                actualSourceId = linkMatch[1];
+            } else {
+                try {
+                    // Logic kiểm tra mã Base64 có bắt đầu bằng 'ey' (dấu '{' trong JSON)
+                    if (studyCodeRaw.startsWith('ey') || (studyCodeRaw.length > 20 && !studyCodeRaw.includes(' '))) {
+                        const decodedStr = decodeURIComponent(escape(atob(studyCodeRaw)));
+                        if (decodedStr.includes('"s":')) { 
+                            const config = JSON.parse(decodedStr);
+                            if (config.s) { 
+                                actualSourceId = config.s; 
+                                window.currentScriptUrl = config.u || ''; 
+                                if (config.l) document.getElementById('input-lesson-name').value = config.l; 
+                            }
+                        }
+                    }
+                } catch(e) {
+                    // Nếu lỗi do người dùng nhập ID thô
+                    console.log("Chuỗi nhập vào là ID thô, không phải Base64.");
                 }
-            } catch(e) {}
+            }
 
-            const sName = document.getElementById('input-student-name').value.trim(), cName = document.getElementById('input-class-name').value.trim(), lName = document.getElementById('input-lesson-name').value.trim();
-            if (!sName || !cName || !lName || !actualSourceId) return showAlert("Vui lòng điền đủ thông tin!");
+            const sName = document.getElementById('input-student-name').value.trim();
+            const cName = document.getElementById('input-class-name').value.trim();
+            let lName = document.getElementById('input-lesson-name').value.trim();
+            
+            // Tự động điền tên bài học nếu người dùng nhập mã ID trực tiếp mà quên nhập tên bài
+            if (!lName && actualSourceId && actualSourceId.toLowerCase() !== 'demo') {
+                lName = "Bài học " + actualSourceId.substring(0, 4);
+                document.getElementById('input-lesson-name').value = lName;
+            }
+
+            if (!sName || !cName || !lName || !actualSourceId) {
+                return showAlert("Vui lòng điền đầy đủ Tên, Lớp, Tên bài học và Mã ID Google Sheet!");
+            }
 
             showScreen('loading-screen');
 
@@ -786,12 +815,20 @@
                 try {
                     const url = `https://docs.google.com/spreadsheets/d/${actualSourceId}/export?format=csv`;
                     const response = await fetch(url);
-                    if (!response.ok) throw new Error("Mã bị lỗi hoặc file chưa Xuất bản web.");
-                    cards = parseCSV(await response.text());
-                    if (cards.length === 0) throw new Error("File trống.");
+                    if (!response.ok) throw new Error("Mã ID bị lỗi hoặc file Google Sheet chưa được 'Xuất bản ra web'.");
+                    
+                    const text = await response.text();
+                    
+                    // Bắt lỗi nếu Google trả về HTML (File chưa bật quyền chia sẻ/chưa xuất bản)
+                    if (text.trim().toLowerCase().startsWith('<!doctype html>') || text.trim().toLowerCase().startsWith('<html')) {
+                        throw new Error("LỖI BẢO MẬT: File Google Sheet CHƯA ĐƯỢC XUẤT BẢN.\n\nHướng dẫn:\n1. Mở file Google Sheet\n2. Chọn Tệp > Chia sẻ > Xuất bản lên web\n3. Bấm nút 'Xuất bản'.");
+                    }
+                    
+                    cards = parseCSV(text);
+                    if (cards.length === 0) throw new Error("Không tìm thấy dữ liệu câu hỏi. File có thể bị trống.");
                     initSession();
                 } catch (error) {
-                    showAlert(error.message + "\nSẽ dùng dữ liệu Mẫu.");
+                    showAlert("Lỗi tải dữ liệu: " + error.message + "\n\nSẽ tạm thời dùng dữ liệu Mẫu (Demo).");
                     document.getElementById('input-study-code').value = 'demo';
                     showScreen('setup-screen');
                 }
@@ -829,8 +866,11 @@
             const th = colorThemes[Math.floor(Math.random() * colorThemes.length)];
             frontEl.classList.add(th.border); backEl.classList.add(th.border);
 
-            document.getElementById('cards-left').innerText = queue.length;
-            document.getElementById('cards-left-mobile').innerText = queue.length;
+            const cardsLeftEl = document.getElementById('cards-left');
+            if (cardsLeftEl) cardsLeftEl.innerText = queue.length;
+            
+            const cardsLeftMobileEl = document.getElementById('cards-left-mobile');
+            if (cardsLeftMobileEl) cardsLeftMobileEl.innerText = queue.length;
             
             // Xử lý lấy câu ngẫu nhiên cho mặt thẻ
             const randomQuote = studyingQuotes[Math.floor(Math.random() * studyingQuotes.length)];
