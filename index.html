@@ -210,31 +210,35 @@
     <!-- ============================================== -->
     <div id="study-screen" class="hidden flex-1 flex flex-col h-full w-full overflow-hidden">
         
-        <!-- Header Siêu Thu Gọn -->
-        <div class="bg-white dark:bg-slate-800 shadow-sm px-2 py-1.5 md:px-4 md:py-2 flex justify-between items-center shrink-0 z-10">
-            <div class="flex items-center gap-1 md:gap-2 overflow-hidden">
+        <!-- Header Siêu Thu Gọn & Biểu tượng Loa ở giữa -->
+        <div class="bg-white dark:bg-slate-800 shadow-sm px-2 py-1.5 md:px-4 md:py-2 flex justify-between items-center shrink-0 z-10 relative">
+            <!-- Vùng Trái: Info (Chiếm 1/3) -->
+            <div class="flex items-center gap-1 md:gap-2 overflow-hidden flex-1">
                 <span id="display-student" class="font-bold text-slate-700 dark:text-slate-200 text-[10px] md:text-sm max-w-[50px] md:max-w-none truncate"></span>
                 <span class="text-slate-300 dark:text-slate-600 text-[10px]">-</span>
                 <span id="display-lesson" class="bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 px-1.5 py-0.5 rounded text-[9px] md:text-xs font-bold truncate max-w-[70px] md:max-w-[150px]"></span>
-                
-                <!-- Hiển thị đánh giá Live -->
-                <div id="live-grade-badge" class="flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 px-1.5 py-0.5 rounded text-[9px] md:text-xs font-bold shrink-0 transition-colors">
-                    <span class="mr-0.5">🌱</span> <span class="hidden sm:inline">Khởi Động</span>
-                </div>
-
-                <div class="flex items-center gap-0.5 text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[9px] md:text-xs font-bold shrink-0">
-                    <i class="ph ph-clock"></i> <span id="timer-display">00:00</span>
-                </div>
             </div>
             
-            <div class="flex items-center gap-1 md:gap-2 shrink-0">
-                <!-- Nút Nhạc Nền -->
-                <button onclick="toggleMusic(event)" class="text-blue-500 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30 p-1 md:p-1.5 rounded flex items-center justify-center font-bold" title="Nhạc nền">
+            <!-- Vùng Giữa: Nút Nhạc Nền (Được đặt căn giữa tuyệt đối) -->
+            <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-20">
+                <button onclick="toggleMusic(event)" class="text-blue-500 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30 p-1.5 md:p-2 rounded-full flex items-center justify-center font-bold shadow-sm transition-all hover:bg-blue-100" title="Bật/Tắt nhạc nền">
                     <i id="music-icon" class="ph-fill ph-speaker-high text-sm md:text-base"></i>
                 </button>
-                <span class="text-slate-500 dark:text-slate-400 text-[10px] md:text-xs font-bold hidden sm:inline">Thẻ: <span id="cards-left">0</span></span>
-                <button onclick="showExitModal()" class="text-red-500 bg-red-50 dark:bg-red-900/30 p-1 md:p-1.5 rounded flex items-center justify-center gap-0.5 font-bold">
-                    <i class="ph ph-sign-out text-sm md:text-base"></i> <span class="hidden sm:inline text-[10px] md:text-xs">Thoát</span>
+            </div>
+
+            <!-- Vùng Phải: Công cụ (Chiếm 1/3) -->
+            <div class="flex items-center justify-end gap-1 md:gap-2 flex-1 shrink-0">
+                <!-- Đồng hồ & Xếp loại (Gộp chung để tiết kiệm chỗ trên mobile) -->
+                <div class="flex flex-col md:flex-row items-end md:items-center gap-0.5 md:gap-1.5">
+                    <div id="live-grade-badge" class="flex items-center bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 px-1.5 py-0.5 rounded text-[9px] md:text-xs font-bold shrink-0 transition-colors">
+                        <span class="mr-0.5">🌱</span> <span class="hidden sm:inline">Khởi Động</span>
+                    </div>
+                    <div class="flex items-center gap-0.5 text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-[9px] md:text-xs font-bold shrink-0">
+                        <i class="ph ph-clock"></i> <span id="timer-display">00:00</span>
+                    </div>
+                </div>
+                <button onclick="showExitModal()" class="text-red-500 bg-red-50 dark:bg-red-900/30 p-1 md:p-1.5 rounded flex items-center justify-center gap-0.5 font-bold ml-1">
+                    <i class="ph ph-sign-out text-sm md:text-base"></i>
                 </button>
             </div>
         </div>
@@ -243,7 +247,7 @@
         <div class="w-full px-2 py-1 md:px-4 md:py-1.5 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 flex flex-col shrink-0 z-10">
             <div class="flex justify-between items-center text-[9px] md:text-[10px] font-bold uppercase tracking-wide mb-0.5">
                 <span id="energy-text" class="text-blue-600 flex items-center gap-0.5"><i class="ph-fill ph-lightning"></i> Khởi động (0%)</span>
-                <span class="text-slate-400"><span class="sm:hidden">Thẻ: <span id="cards-left-mobile">0</span> |</span> Đích: 100%</span>
+                <span class="text-slate-400">Thẻ: <span id="cards-left-mobile">0</span> | Đích: 100%</span>
             </div>
             <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 md:h-2 rounded-full overflow-hidden flex">
                 <div id="energy-bar" class="h-full bg-blue-500 transition-all duration-500 rounded-full relative overflow-hidden" style="width: 0%">
@@ -252,28 +256,31 @@
             </div>
         </div>
 
-        <!-- Vùng Thẻ nhớ (Ép gọn không cho phép cuộn trang) -->
-        <div class="flex-1 flex flex-col items-center justify-center p-2 md:p-4 w-full overflow-hidden min-h-0">
+        <!-- Vùng Thẻ nhớ (Mở rộng sát 2 mép điện thoại w-[96vw]) -->
+        <div class="flex-1 flex flex-col items-center justify-center p-1 md:p-4 w-full overflow-hidden min-h-0">
             
-            <!-- Flashcard: Hình vuông, kích thước tối đa 320px trên ĐT để thừa chỗ cho các nút -->
-            <div id="flashcard-container" class="w-[85vw] max-w-[320px] md:max-w-[400px] aspect-square relative perspective-1000 cursor-pointer shrink-0 shadow-lg rounded-2xl mx-auto" onclick="flipCard()">
+            <!-- Flashcard: Hình vuông, kích thước siêu lớn w-[96vw] trên Mobile -->
+            <div id="flashcard-container" class="w-[96vw] sm:w-[85vw] max-w-[400px] md:max-w-[450px] aspect-square relative perspective-1000 cursor-pointer shrink-0 shadow-lg rounded-2xl mx-auto" onclick="flipCard()">
                 
                 <div id="feedback-overlay" class="hidden absolute inset-0 z-50 flex items-center justify-center pointer-events-none"></div>
 
                 <div id="card-inner" class="w-full h-full absolute transition-all duration-500 transform-style-3d rounded-2xl">
                     
                     <!-- Mặt trước (Câu hỏi) -->
-                    <div id="card-front" class="absolute w-full h-full bg-white dark:bg-slate-800 rounded-2xl backface-hidden flex flex-col items-center justify-center p-3 md:p-6 border-[6px] md:border-[8px] border-slate-300 dark:border-slate-600 card-border-transition overflow-hidden">
+                    <div id="card-front" class="absolute w-full h-full bg-white dark:bg-slate-800 rounded-2xl backface-hidden flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 border-[4px] md:border-[6px] border-slate-300 dark:border-slate-600 card-border-transition overflow-hidden">
                         
-                        <span class="absolute top-2 left-3 md:top-3 md:left-4 text-slate-400 font-bold text-[9px] md:text-[11px] uppercase flex items-center gap-0.5">
+                        <!-- Câu châm ngôn ở mép trên cùng thẻ -->
+                        <div id="card-front-quote" class="absolute top-1.5 md:top-2 left-0 right-0 mx-auto w-[85%] text-center text-[9px] md:text-xs text-slate-400 dark:text-slate-500 italic font-medium truncate"></div>
+
+                        <span class="absolute top-5 left-3 md:top-6 md:left-4 text-slate-400 font-bold text-[9px] md:text-[11px] uppercase flex items-center gap-0.5">
                             <i class="ph ph-question text-sm"></i> Hỏi
                         </span>
 
-                        <button id="show-tips-btn" onclick="toggleTips(event)" class="hidden absolute top-2 right-2 md:top-3 md:right-4 text-amber-500 bg-amber-50 p-1.5 rounded-full z-20 shadow-sm">
+                        <button id="show-tips-btn" onclick="toggleTips(event)" class="hidden absolute top-4 right-2 md:top-5 md:right-4 text-amber-500 bg-amber-50 p-1.5 rounded-full z-20 shadow-sm">
                             <i class="ph-fill ph-lightbulb text-sm animate-pulse"></i>
                         </button>
 
-                        <div id="study-tips-box" class="absolute top-1 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[280px] bg-amber-50 dark:bg-amber-900/90 border border-amber-200 rounded-lg p-2 text-[10px] md:text-xs text-amber-800 dark:text-amber-200 z-30 shadow-md transition-all duration-300">
+                        <div id="study-tips-box" class="absolute top-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[280px] bg-amber-50 dark:bg-amber-900/90 border border-amber-200 rounded-lg p-2 text-[10px] md:text-xs text-amber-800 dark:text-amber-200 z-30 shadow-md transition-all duration-300">
                             <div class="flex justify-between items-start mb-1">
                                 <h4 class="font-bold flex items-center gap-1"><i class="ph-fill ph-magic-wand text-xs"></i> Bí kíp:</h4>
                                 <button onclick="toggleTips(event)" class="text-amber-500 bg-amber-100 p-0.5 rounded-full"><i class="ph-bold ph-x text-[10px]"></i></button>
@@ -284,27 +291,31 @@
                             </ul>
                         </div>
                         
-                        <!-- Vùng nội dung: leading-tight để ép sát khoảng cách dòng -->
-                        <div id="card-front-content" class="font-bold text-center text-slate-800 dark:text-white w-full overflow-hidden break-words max-h-[85%] px-1 sm:px-2 leading-tight whitespace-pre-wrap mt-2"></div>
+                        <!-- Vùng nội dung: padding siêu nhỏ để chứa tối đa chữ -->
+                        <div id="card-front-content" class="font-bold text-center text-slate-800 dark:text-white w-full overflow-hidden break-words max-h-[75%] px-0.5 sm:px-2 leading-tight whitespace-pre-wrap mt-4 mb-4"></div>
                         
-                        <p id="flip-hint" class="absolute bottom-2 text-blue-600 text-[10px] md:text-xs animate-bounce flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full font-bold border border-blue-200 cursor-pointer">
+                        <p id="flip-hint" class="absolute bottom-1.5 text-blue-600 text-[10px] md:text-xs animate-bounce flex items-center gap-1 bg-blue-50 px-3 py-1 rounded-full font-bold border border-blue-200 cursor-pointer">
                             <i class="ph-bold ph-arrows-clockwise text-sm"></i> Chạm lật
                         </p>
                     </div>
 
                     <!-- Mặt sau (Đáp án) -->
-                    <div id="card-back" class="absolute w-full h-full bg-white dark:bg-slate-800 rounded-2xl backface-hidden flex flex-col items-center justify-center p-3 md:p-6 border-[6px] md:border-[8px] border-blue-400 dark:border-blue-700 rotate-y-180 card-border-transition overflow-hidden">
-                        <span class="absolute top-2 left-3 md:top-3 md:left-4 text-blue-500 font-bold text-[9px] md:text-[11px] uppercase flex items-center gap-0.5">
+                    <div id="card-back" class="absolute w-full h-full bg-white dark:bg-slate-800 rounded-2xl backface-hidden flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 border-[4px] md:border-[6px] border-blue-400 dark:border-blue-700 rotate-y-180 card-border-transition overflow-hidden">
+                        
+                        <!-- Câu châm ngôn ở mép trên cùng thẻ -->
+                        <div id="card-back-quote" class="absolute top-1.5 md:top-2 left-0 right-0 mx-auto w-[85%] text-center text-[9px] md:text-xs text-blue-400/80 dark:text-blue-300/80 italic font-medium truncate"></div>
+
+                        <span class="absolute top-5 left-3 md:top-6 md:left-4 text-blue-500 font-bold text-[9px] md:text-[11px] uppercase flex items-center gap-0.5">
                             <i class="ph ph-lightbulb text-sm"></i> Đáp án
                         </span>
                         
-                        <div id="card-back-content" class="font-bold text-center text-slate-800 dark:text-white w-full overflow-hidden break-words max-h-[85%] px-1 sm:px-2 leading-tight whitespace-pre-wrap"></div>
+                        <div id="card-back-content" class="font-bold text-center text-slate-800 dark:text-white w-full overflow-hidden break-words max-h-[75%] px-0.5 sm:px-2 leading-tight whitespace-pre-wrap mt-4 mb-4"></div>
                     </div>
 
                 </div>
             </div>
 
-            <!-- Nút hành động (Thu gọn Padding để hiển thị trọn trên màn hình) -->
+            <!-- Nút hành động -->
             <div id="action-buttons" class="w-full flex justify-center gap-2 mt-3 transition-all duration-500 opacity-0 translate-y-2 pointer-events-none px-1 shrink-0 pb-1">
                 <button onclick="handleRating('hard', event)" class="flex-1 max-w-[90px] sm:max-w-[120px] py-2 bg-red-100 text-red-700 rounded-xl font-bold flex flex-col items-center justify-center gap-0.5 shadow-sm text-[10px] sm:text-xs border border-red-200">
                     <i class="ph-fill ph-warning-circle text-lg md:text-xl"></i> Khó
@@ -512,6 +523,60 @@
 
         let audioCtx; 
 
+        // Tuyển tập 50 câu danh ngôn, thành ngữ về sự nỗ lực học tập
+        const studyingQuotes = [
+            "Trên bước đường thành công không có dấu chân của kẻ lười biếng.",
+            "Ngọc kia chẳng dũa chẳng mài, cũng thành vô dụng cũng hoài ngọc đi.",
+            "Thiên tài 1% là cảm hứng và 99% là mồ hôi.",
+            "Đừng xấu hổ khi không biết, chỉ xấu hổ khi không học.",
+            "Đừng dừng lại khi mệt mỏi, hãy dừng lại khi đã xong!",
+            "Chặng đường ngàn dặm luôn bắt đầu từ một bước chân.",
+            "Học tập là hạt giống của kiến thức, kiến thức là hạt giống hạnh phúc.",
+            "Sự kiên trì là mẹ của thành công.",
+            "Nỗ lực gấp đôi, kết quả gấp mười.",
+            "Không có áp lực, không có kim cương.",
+            "Thất bại là mẹ thành công.",
+            "Học vấn do người siêng năng đạt được.",
+            "Đừng cầu mong một cuộc sống dễ dàng, hãy cầu mong sức mạnh.",
+            "Mọi nỗ lực hôm nay đều được đền đáp vào ngày mai.",
+            "Người có chí thì nên, nhà có nền thì vững.",
+            "Một chữ cũng là thầy, nửa chữ cũng là thầy.",
+            "Học không biết chán, dạy người không biết mỏi.",
+            "Rễ của học tập thì đắng cay nhưng quả của nó thì ngọt ngào.",
+            "Có công mài sắt, có ngày nên kim.",
+            "Luyện mãi thành tài, miệt mài tất giỏi.",
+            "Học hỏi là một việc phải tiếp tục suốt đời.",
+            "Trí tuệ của con người trưởng thành trong tĩnh lặng.",
+            "Không có tài sản nào quý giá bằng trí thông minh.",
+            "Đường đi khó, không khó vì ngăn sông cách núi.",
+            "Hãy hướng về phía mặt trời, bóng tối sẽ ngả về sau bạn.",
+            "Cách tốt nhất để dự đoán tương lai là tạo ra nó.",
+            "Nếu bạn không chịu bắt tay vào làm thì chẳng có điều gì là có thể cả.",
+            "Chỉ cần bạn không dừng lại, việc bạn tiến chậm cũng không là vấn đề.",
+            "Hạnh phúc là chìa khóa dẫn tới thành công.",
+            "Khác biệt giữa người thành công và người thường là ý chí.",
+            "Người ta không thất bại, họ chỉ ngừng cố gắng.",
+            "Gian nan rèn luyện mới thành công.",
+            "Tri thức là sức mạnh.",
+            "Đầu tư vào tri thức đem lại lợi nhuận cao nhất.",
+            "Người khôn ngoan học từ kẻ thù của mình.",
+            "Nơi nào có ý chí, nơi đó có con đường.",
+            "Không bao giờ là quá già để đặt ra mục tiêu mới.",
+            "Hãy làm những việc bình thường bằng lòng say mê phi thường.",
+            "Những gì bạn làm hôm nay cải thiện ngày mai của bạn.",
+            "Càng học nhiều, bạn càng nhận ra mình biết ít đi.",
+            "Bạn chỉ thất bại khi bạn ngừng cố gắng.",
+            "Người dời núi bắt đầu bằng việc mang đi những viên đá nhỏ.",
+            "Khó khăn sẽ tạo ra những con người kiệt xuất.",
+            "Học từ hôm qua, sống cho hôm nay, hy vọng cho ngày mai.",
+            "Muốn ngồi ở vị trí không ai ngồi được, phải chịu cảm giác không ai chịu được.",
+            "Không có giới hạn nào ngoại trừ giới hạn bạn tự đặt ra.",
+            "Kỷ luật là cầu nối giữa mục tiêu và thành tựu.",
+            "Hãy học khi người khác ngủ, lao động khi người khác lười nhác.",
+            "Ngày mai là của những người chuẩn bị từ hôm nay.",
+            "Có vất vả mới thanh nhàn, không dưng ai dễ cầm phần ô che."
+        ];
+
         function initApp() {
             initDarkMode();
             try {
@@ -559,17 +624,6 @@
         let currentBgClass = 'bg-slate-50';
         let currentBorderClass = 'border-slate-400';
         let currentDarkBorderClass = 'border-slate-500';
-
-        // Tuyển tập những câu nói truyền cảm hứng mạnh mẽ
-        const motivationalQuotes = [
-            "Trên bước đường thành công không có dấu chân của kẻ lười biếng. (Lỗ Tấn)",
-            "Ngọc kia chẳng dũa chẳng mài, cũng thành vô dụng cũng hoài ngọc đi.",
-            "Thiên tài 1% là cảm hứng và 99% là mồ hôi. (Thomas Edison)",
-            "Đừng xấu hổ khi không biết, chỉ xấu hổ khi không học.",
-            "Đừng dừng lại khi mệt mỏi, hãy dừng lại khi đã xong!",
-            "Chặng đường ngàn dặm luôn bắt đầu từ một bước chân. (Lão Tử)",
-            "Học tập là hạt giống của kiến thức, kiến thức là hạt giống của hạnh phúc."
-        ];
 
         function showScreen(screenId) {
             ['setup-screen', 'loading-screen', 'study-screen', 'summary-screen', 'exit-modal', 'alert-modal', 'save-code-modal', 'teacher-modal', 'teacher-auth-modal'].forEach(id => {
@@ -667,8 +721,9 @@
             const backEl = document.getElementById(backId);
             frontEl.style.fontSize = ''; backEl.style.fontSize = '';
             
-            let maxSize = window.innerWidth < 768 ? 44 : 56;
-            let minSize = window.innerWidth < 768 ? 20 : 18;
+            // Thuật toán co giãn văn bản để đảm bảo hiển thị to nhất có thể
+            let maxSize = window.innerWidth < 768 ? 64 : 80;
+            let minSize = window.innerWidth < 768 ? 22 : 18;
             
             frontEl.style.fontSize = maxSize + 'px';
             backEl.style.fontSize = maxSize + 'px';
@@ -777,6 +832,11 @@
             document.getElementById('cards-left').innerText = queue.length;
             document.getElementById('cards-left-mobile').innerText = queue.length;
             
+            // Xử lý lấy câu ngẫu nhiên cho mặt thẻ
+            const randomQuote = studyingQuotes[Math.floor(Math.random() * studyingQuotes.length)];
+            document.getElementById('card-front-quote').innerText = randomQuote;
+            document.getElementById('card-back-quote').innerText = randomQuote;
+            
             let prog = Math.min(100, Math.max(0, Math.round(((cards.length - queue.length) / cards.length) * 100)));
             let dp = studyMode === 'normal' ? prog : Math.max(5, prog);
             
@@ -883,7 +943,7 @@
         }
 
         function showExitModal() { 
-            const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+            const randomQuote = studyingQuotes[Math.floor(Math.random() * studyingQuotes.length)];
             document.getElementById('exit-quote').innerText = `"${randomQuote}"`; 
             document.getElementById('exit-modal').classList.remove('hidden'); 
         }
@@ -925,7 +985,7 @@
             document.getElementById('summary-level-quote').innerText=quote;
 
             // Câu thành ngữ động viên ngẫu nhiên
-            const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+            const randomQuote = studyingQuotes[Math.floor(Math.random() * studyingQuotes.length)];
             document.getElementById('summary-final-quote').innerText = `"${randomQuote}"`;
 
             if (window.currentScriptUrl) {
