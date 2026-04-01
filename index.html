@@ -463,15 +463,14 @@
         let timerInterval = null;
         let secondsElapsed = 0;
 
-        // Đã chuyển đổi link Google Drive sang định dạng Direct Link
-        const bgMusic = new Audio('https://drive.google.com/uc?export=download&id=120sBWZvsVGjz9oJ8d60O3t9JnY9hdveR');
+        // Sử dụng link trực tiếp định dạng .mp3 như yêu cầu
+        const bgMusic = new Audio('https://files.catbox.moe/r8lygd.mp3');
         bgMusic.crossOrigin = "anonymous";
         bgMusic.loop = true;
-        bgMusic.volume = 0.5; // Tăng âm lượng lên 50% để nghe rõ nhạc của thầy hơn
+        bgMusic.volume = 0.5; // Giữ nguyên âm lượng
         
-        // Bắt lỗi tĩnh để ngăn chặn NotSupportedError crash ứng dụng
         bgMusic.addEventListener('error', function(e) {
-            console.warn("Không thể phát nhạc từ Google Drive (Google có thể chặn luồng trực tiếp).", e);
+            console.warn("Không thể phát nhạc từ nguồn này.", e);
         });
 
         let audioCtx; // Biến âm thanh hiệu ứng lật thẻ
@@ -607,7 +606,7 @@
                     }).catch(e => {
                         console.warn("Không thể phát nhạc:", e);
                         icon.className = "ph-fill ph-speaker-slash text-sm md:text-base";
-                        showAlert("Trình duyệt không hỗ trợ phát trực tiếp định dạng từ link Google Drive này. Thầy hãy thử dùng file chuẩn đuôi .mp3 nhé!");
+                        showAlert("Trình duyệt không hỗ trợ phát trực tiếp link nhạc này.");
                     });
                 }
             } 
@@ -712,7 +711,7 @@
                 playPromise.then(() => {
                     document.getElementById('music-icon').className = "ph-fill ph-speaker-high text-sm";
                 }).catch((e) => {
-                    console.log("Trình duyệt chặn phát nhạc hoặc nguồn Google Drive lỗi:", e);
+                    console.log("Trình duyệt chặn phát nhạc hoặc nguồn lỗi:", e);
                     document.getElementById('music-icon').className = "ph-fill ph-speaker-slash text-sm";
                 });
             }
